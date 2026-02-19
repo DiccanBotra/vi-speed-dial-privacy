@@ -7,7 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-
       "resizeMode": "contain",
       "backgroundColor": "#FFD700"
     },
@@ -37,6 +36,11 @@
     },
     "plugins": [
       "expo-localization"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "793b24f4-e23c-497d-a2d8-21280b99014c"
+      }
+    }
   }
 }
