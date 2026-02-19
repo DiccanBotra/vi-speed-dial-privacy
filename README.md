@@ -1,146 +1,148 @@
-# Speed Dial za slabovide osobe
+# Speed Dial for Visually Impaired Persons
 
-## 📱 O aplikaciji
+## 📱 About the App
+An application designed for visually impaired persons with a simple interface for quick calling. Uses bright colors and large buttons for easier use.
 
-Aplikacija namenjena slabovdim osobama sa jednostavnim interfejsom za brzo pozivanje. Koristi jarke boje i velike dugmiće za lakše korišćenje.
+## ✨ Features
+- **4 or 6 speed dial slots** - Choose on first launch
+- **Bright colors** - White, Red, Fluorescent Green, Blue, Orange, Purple
+- **2 columns** - Buttons arranged in 2 columns × 2-3 rows
+- **Top yellow bar** - For accessing settings (100px)
+- **Phone book selection** - Easily add existing contacts
+- **Manual entry** - Ability to manually enter name and number
+- **Color assignment** - Each contact gets its own bright color
+- **Direct calling** - Tap a button to immediately call the number
 
-## ✨ Funkcionalnosti
+## 🚀 Installation and Setup
 
-- **4 ili 6 brzih brojeva** - Izbor pri prvom pokretanju
-- **Jarke boje** - Bela, Crvena, Fluozelena, Plava, Narandžasta, Ljubičasta
-- **2 kolone** - Dugmići raspoređeni u 2 kolone × 2-3 reda
-- **Gornja žuta traka** - Za pristup podešavanjima (100px)
-- **Izbor iz telefonskog imenika** - Jednostavno dodavanje postojećih kontakata
-- **Ručni unos** - Mogućnost ručnog unosa imena i broja
-- **Dodela boja** - Svaki kontakt dobija svoju jarku boju
-- **Direktno pozivanje** - Klik na dugme odmah poziva broj
-
-## 🚀 Instalacija i pokretanje
-
-### Preduslov
+### Prerequisites
 ```bash
-# Instalirajte Node.js (v16 ili noviji)
-# Instalirajte Expo CLI
+# Install Node.js (v16 or newer)
+# Install Expo CLI
 npm install -g expo-cli
 ```
 
-### Instalacija projekta
+### Project Installation
 ```bash
 cd SlabovidiSpeedDial
 npm install
 ```
 
-### Pokretanje aplikacije
+### Running the App
 
-#### Testiranje na fizičkom telefonu (preporučeno)
-1. Instalirajte **Expo Go** aplikaciju na telefonu:
+#### Testing on a physical phone (recommended)
+1. Install the **Expo Go** app on your phone:
    - Android: [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
    - iOS: [App Store](https://apps.apple.com/app/expo-go/id982107779)
 
-2. Pokrenite aplikaciju:
+2. Start the application:
 ```bash
 npm start
 ```
 
-3. Skenirajte QR kod:
-   - **Android**: Koristite Expo Go aplikaciju
-   - **iOS**: Koristite kameru telefona
+3. Scan the QR code:
+   - **Android**: Use the Expo Go app
+   - **iOS**: Use your phone's camera
 
-#### Testiranje na emulatoru
+#### Testing on an emulator
 ```bash
 # Android emulator
 npm run android
 
-# iOS simulator (samo na macOS)
+# iOS simulator (macOS only)
 npm run ios
 ```
 
-## 📖 Kako koristiti
+## 📖 How to Use
 
-### Prvo pokretanje
-1. Aplikacija će pitati da li želite **4 ili 6 brzih brojeva**
-2. Izaberite željeni broj
+### First Launch
+1. The app will ask whether you want **4 or 6 speed dial slots**
+2. Select your preferred number
 
-### Dodavanje kontakata
-1. **Dodirnite žutu traku** na vrhu ekrana
-2. Za svaki kontakt možete:
-   - **✎** - Ručno unesite ime i broj
-   - **📱** - Izaberite iz telefonskog imenika
-   - **🎨** - Promenite boju dugmeta
+### Adding Contacts
+1. **Tap the yellow bar** at the top of the screen
+2. For each contact you can:
+   - **✎** - Manually enter name and number
+   - **📱** - Select from the phone book
+   - **🎨** - Change the button color
 
-### Pozivanje
-1. Jednostavno **dodirnite obojeni dugme** kontakta koga želite pozvati
-2. Telefon će odmah pokrenuti poziv
+### Calling
+1. Simply **tap the colored button** of the contact you want to call
+2. The phone will immediately start the call
 
-### Resetovanje
-1. Dodirnite žutu traku
-2. Skrolujte dole i kliknite **"🔄 RESETUJ APLIKACIJU"**
-3. Aplikacija će se vratiti na početno stanje
+### Reset
+1. Tap the yellow bar
+2. Scroll down and click **"🔄 RESET APP"**
+3. The app will return to its initial state
 
-## 🎨 Dostupne boje
+## 🎨 Available Colors
 
-- **Bela** (#FFFFFF)
-- **Crvena** (#FF0000)
-- **Fluozelena** (#00FF00)
-- **Plava** (#0000FF)
-- **Narandžasta** (#FF6600)
-- **Ljubičasta** (#9933FF)
+| Color | Hex |
+|-------|-----|
+| White | `#FFFFFF` |
+| Red | `#FF0000` |
+| Fluorescent Green | `#00FF00` |
+| Blue | `#0000FF` |
+| Orange | `#FF6600` |
+| Purple | `#9933FF` |
 
-## 🔒 Dozvole
+## 🔒 Permissions
 
-Aplikacija zahteva sledeće dozvole:
-- **Kontakti** - Za čitanje kontakata iz telefonskog imenika
-- **Telefonski pozivi** - Za pokretanje poziva
+The application requires the following permissions:
+- **Contacts** - For reading contacts from the phone book
+- **Phone calls** - For initiating calls
 
-## 📱 Kreiranje APK fajla (Android)
+## 📱 Creating an APK File (Android)
 
 ```bash
-# Build za Android
+# Build for Android
 eas build --platform android
 
-# Ili klasičan Expo build
+# Or classic Expo build
 expo build:android
 ```
 
-## 💡 Saveti
+## 💡 Tips
 
-- **Za slabovide osobe**: Dugmići su veliki i jasno obojeni
-- **Za pomoćnike**: Žuta traka omogućava brzo ažuriranje kontakata
-- **Raspored**: 2 kolone omogućavaju lakše snalaženje
-- **Kontrast**: Svaka boja ima odgovarajuću boju teksta za maksimalnu čitljivost
+- **For visually impaired persons**: Buttons are large and clearly colored
+- **For caregivers**: The yellow bar allows quick contact updates
+- **Layout**: 2 columns make navigation easier
+- **Contrast**: Each color has an appropriate text color for maximum readability
 
-## 🛠 Tehnologije
+## 🛠 Technologies
 
-- **React Native** - Framework za mobilne aplikacije
-- **Expo** - Razvojno okruženje i alati
-- **AsyncStorage** - Lokalno čuvanje podataka
-- **Expo Contacts** - Pristup telefonskom imeniku
-- **Expo Linking** - Pokretanje telefonskih poziva
+| Technology | Purpose |
+|------------|---------|
+| [React Native](https://reactnative.dev/) | Mobile application framework |
+| [Expo](https://expo.dev/) | Development environment and tools |
+| [AsyncStorage](https://react-native-async-storage.github.io/async-storage/) | Local data storage |
+| [Expo Contacts](https://docs.expo.dev/versions/latest/sdk/contacts/) | Phone book access |
+| [Expo Linking](https://docs.expo.dev/versions/latest/sdk/linking/) | Initiating phone calls |
 
-## 📝 Struktura projekta
+## 📝 Project Structure
 
 ```
 SlabovidiSpeedDial/
-├── App.js              # Glavni fajl aplikacije
-├── app.json            # Expo konfiguracija
-├── package.json        # NPM zavisnosti
-├── babel.config.js     # Babel konfiguracija
-└── README.md           # Dokumentacija
+├── App.js              # Main application file
+├── app.json            # Expo configuration
+├── package.json        # NPM dependencies
+├── babel.config.js     # Babel configuration
+└── README.md           # Documentation
 ```
 
-## 🐛 Poznati problemi
+## 🐛 Known Issues
 
-- **iOS**: Kod pozivanja može se pojaviti dodatni dijalog za potvrdu
-- **Android**: Potrebna je dozvola za pozive u podešavanjima telefona
+- **iOS**: An additional confirmation dialog may appear when calling
+- **Android**: Call permission must be granted in phone settings
 
-## 📄 Licenca
+## 📄 License
 
-MIT License - Slobodno za upotrebu i modifikaciju
+This project is licensed under the [MIT License](LICENSE) - free to use and modify.
 
-## 👨‍💻 Razvoj
+## 👨‍💻 Development
 
-Razvijeno za pomoć slabovim osobama u lakšem korišćenju telefona.
+Developed to help visually impaired persons use their phone more easily.
 
 ---
 
-**Napomena**: Testirajte aplikaciju pre davanja slabovdim osobama kako biste se uverili da sve funkcioniše kako treba.
+> **Note:** Test the application before giving it to visually impaired persons to make sure everything works as intended.
