@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "VI Speed Dial",
+    "slug": "vi-speed-dial",
+    "version": "1.0.2",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+
+      "resizeMode": "contain",
+      "backgroundColor": "#FFD700"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vispeeddial.app",
+      "infoPlist": {
+        "NSContactsUsageDescription": "Aplikacija treba pristup kontaktima za izbor brzih brojeva."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFD700"
+      },
+      "package": "com.vispeeddial.app",
+      "permissions": [
+        "READ_CONTACTS",
+        "CALL_PHONE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-localization"
+    ]
+  }
+}
