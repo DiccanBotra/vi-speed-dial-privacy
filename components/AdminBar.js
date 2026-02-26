@@ -17,7 +17,7 @@ export default function AdminBar({
   language,
   onOpenCredits,
   showCredits,
-  onBack, // 👈 novo: nazad (zatvara credits ili settings)
+  onBack,
 }) {
   const showBack = !!showSettings || !!showCredits;
 
@@ -36,21 +36,21 @@ export default function AdminBar({
           </TouchableOpacity>
         )}
 
-        {/* centriran title */}
+        {/* center title */}
         <Text style={styles.text}>{title}</Text>
 
-        {/* desno: Credits samo kad nismo već na Credits */}
+        {/* right: Credits samo kad nismo već na Credits */}
         {!showCredits && (
           <TouchableOpacity
             style={styles.creditsButton}
             onPress={onOpenCredits}
             accessibilityLabel="Credits"
           >
-            <Text style={styles.creditsText}>!</Text>
+            <Text style={styles.creditsText}>ⓘ</Text>
           </TouchableOpacity>
         )}
 
-        {/* kad smo u settings modu, klik na title neka i dalje toggluje settings */}
+        {/* settings mode, click still toggles settings */}
         {!showCredits && (
           <TouchableOpacity style={styles.invisibleTap} onPress={onToggleSettings} />
         )}
@@ -85,16 +85,19 @@ const styles = StyleSheet.create({
     right: 20,
     width: 42,
     height: 42,
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  creditsText: {
+    creditsText: {
     color: '#FFD700',
-    fontSize: 26,
-    fontWeight: 'bold',
-    lineHeight: 26,
+    fontSize: 30,
+    fontWeight: '800',
+    textAlign: 'center',
+    includeFontPadding: false,
+    lineHeight: 30,
+    marginTop: -2,
   },
   text: {
     fontSize: 24,
@@ -103,7 +106,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // “nevidljivo dugme” preko naslova, da zadržiš tap-to-settings ponašanje
+  // “nevidljivo dugme” preko naslova, da zadržimo tap-to-settings ponašanje
   invisibleTap: {
     position: 'absolute',
     left: 80,
