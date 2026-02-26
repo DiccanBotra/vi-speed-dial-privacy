@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'Ohne Nummer wird kein Anruf gestartet.',
 
   contact_picker_title: 'Kontakt auswählen',
+  choose_number_title: 'Wählen Sie die gewünschte Nummer',
   contact_search_placeholder: 'Kontakte durchsuchen...',
   contact_permission_error: 'Keine Berechtigung für Kontakte',
   cancel_upper: 'ABBRECHEN',

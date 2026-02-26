@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'Si una ficha no tiene número, la llamada no se iniciará.',
 
   contact_picker_title: 'Seleccionar contacto',
+  choose_number_title: 'Elige el número deseado',
   contact_search_placeholder: 'Buscar contactos...',
   contact_permission_error: 'Permiso de contactos denegado',
   cancel_upper: 'CANCELAR',

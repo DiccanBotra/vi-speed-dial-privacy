@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import {
   Modal,
   View,
@@ -13,31 +13,44 @@ import * as Contacts from 'expo-contacts';
 
 import { t } from '../../i18n/t';
 
-const MAX_RESULTS = 80;   // 🔥 ograničenje prikaza da ne renderuje hiljade stavki
+const MAX_RESULTS = 80;
 const DEBOUNCE_MS = 250;
 
+// helper: “normalizuj” broj za pretragu (ne dira prikaz)
+function normalizeForSearch(num) {
+  if (!num) return '';
+  return String(num).toLowerCase().replace(/\s+/g, '');
+}
+
 export default function ContactPickerModal({ visible, onClose, onSelect, language }) {
-  const [allContacts, setAllContacts] = useState([]);
-  const [results, setResults] = useState([]); // ono što prikazujemo (max 80)
+  const [results, setResults] = useState([]);
   const [search, setSearch] = useState('');
 
-  const contactsRef = useRef([]); // čuvamo listu i u ref-u da filter ne zavisi od rendera
+  const contactsRef = useRef([]);
+
+  // secondary modal for choosing among multiple phone numbers
+  const [phoneModalVisible, setPhoneModalVisible] = useState(false);
+  const [phoneModalName, setPhoneModalName] = useState('');
+  const [phoneModalPhones, setPhoneModalPhones] = useState([]); // [{ label, number, numberLower }]
 
   useEffect(() => {
     if (!visible) return;
-    loadContacts();
-    // reset kada se otvori
+
+    // reset when opening
     setSearch('');
     setResults([]);
+    setPhoneModalVisible(false);
+    setPhoneModalName('');
+    setPhoneModalPhones([]);
+
+    loadContacts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   async function loadContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert(
-        t(language, 'error_title'),
-        t(language, 'contact_permission_error')
-      );
+      Alert.alert(t(language, 'error_title'), t(language, 'contact_permission_error'));
       return;
     }
 
@@ -47,48 +60,67 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
       sort: Contacts.SortTypes.FirstName,
     });
 
-    // Normalizacija jednom (ključna stvar)
     const normalized = (data || [])
       .map((c) => {
-        const phone = c.phoneNumbers?.[0]?.number || '';
+        const rawPhones = Array.isArray(c.phoneNumbers) ? c.phoneNumbers : [];
+
+        // uzmi sve brojeve (i izbaci prazne)
+        const phones = rawPhones
+          .map((p) => ({
+            label: p?.label || '',
+            number: p?.number || '',
+            numberLower: normalizeForSearch(p?.number || ''),
+          }))
+          .filter((p) => !!p.number);
+
+        const firstPhone = phones[0]?.number || '';
+
         return {
-          id: c.id, // expo-contacts obično ima id
+          id: c.id,
           name: c.name || '',
-          phone,
           nameLower: (c.name || '').toLowerCase(),
-          phoneLower: phone.toLowerCase(),
+          phones, // 🔥 sva telefonska polja
+          firstPhone,
+          // za brzu pretragu po bilo kom broju
+          phonesSearch: phones.map((p) => p.numberLower).join(' '),
         };
       })
-      // opcionalno: izbaci kontakte bez broja (mnogo ubrzava + bolji UX)
-      .filter((c) => !!c.phone);
+      // izbaci kontakte bez broja
+      .filter((c) => c.phones.length > 0);
 
     contactsRef.current = normalized;
-    setAllContacts(normalized);
 
-    // inicijalno pokaži prvih 80 (da ne bude prazno)
+    // inicijalno pokaži prvih MAX_RESULTS
     setResults(normalized.slice(0, MAX_RESULTS));
   }
 
-  // ✅ DEBOUNCE pretrage: rezultat računamo u timeout-u i upisujemo u state
+  // debounce search
   useEffect(() => {
     if (!visible) return;
 
     const id = setTimeout(() => {
-      const q = search.trim().toLowerCase();
+      const qRaw = search.trim().toLowerCase();
+      const qPhone = normalizeForSearch(qRaw);
       const list = contactsRef.current;
 
-      if (!q) {
+      if (!qRaw) {
         setResults(list.slice(0, MAX_RESULTS));
         return;
       }
 
-      // filter po imenu ili broju (korisno)
       const next = [];
       for (let i = 0; i < list.length; i++) {
         const c = list[i];
-        if (c.nameLower.includes(q) || c.phoneLower.includes(q)) {
+
+        const matchName = c.nameLower.includes(qRaw);
+        // ako korisnik kuca broj, uklanjamo razmake radi boljeg match-a
+        const matchPhone =
+          qPhone.length > 0 &&
+          (c.phonesSearch.includes(qPhone) || c.firstPhone.toLowerCase().includes(qRaw));
+
+        if (matchName || matchPhone) {
           next.push(c);
-          if (next.length >= MAX_RESULTS) break; // hard stop
+          if (next.length >= MAX_RESULTS) break;
         }
       }
       setResults(next);
@@ -97,19 +129,81 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
     return () => clearTimeout(id);
   }, [search, visible]);
 
-  const renderItem = useCallback(({ item }) => {
-    return (
-      <TouchableOpacity
-        style={styles.item}
-        onPress={() => onSelect?.({ name: item.name, phone: item.phone })}
-      >
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.phone}>{item.phone}</Text>
-      </TouchableOpacity>
-    );
-  }, [onSelect]);
+  const closePhoneModal = useCallback(() => {
+    setPhoneModalVisible(false);
+    setPhoneModalName('');
+    setPhoneModalPhones([]);
+  }, []);
+
+  const openPhoneModal = useCallback((contact) => {
+    setPhoneModalName(contact.name);
+    setPhoneModalPhones(contact.phones);
+    setPhoneModalVisible(true);
+  }, []);
+
+  const handleSelectPhone = useCallback(
+    (name, phone) => {
+      closePhoneModal();
+      onSelect?.({ name, phone });
+    },
+    [closePhoneModal, onSelect]
+  );
+
+  const renderItem = useCallback(
+    ({ item }) => {
+      const moreCount = item.phones.length - 1;
+
+      return (
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => {
+            if (item.phones.length === 1) {
+              onSelect?.({ name: item.name, phone: item.phones[0].number });
+              return;
+            }
+            openPhoneModal(item);
+          }}
+        >
+          <View style={styles.row}>
+            <Text style={styles.name}>{item.name}</Text>
+
+            {moreCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{`+${moreCount}`}</Text>
+              </View>
+            )}
+          </View>
+
+          <Text style={styles.phone}>{item.firstPhone}</Text>
+        </TouchableOpacity>
+      );
+    },
+    [onSelect, openPhoneModal]
+  );
 
   const keyExtractor = useCallback((item) => item.id, []);
+
+  const phoneModalTitle = useMemo(() => {
+    return t(language, 'choose_number_title');
+  }, [language]);
+
+  const renderPhoneOption = useCallback(
+    ({ item }) => {
+      const label = item.label ? ` (${item.label})` : '';
+      return (
+        <TouchableOpacity
+          style={styles.phoneOption}
+          onPress={() => handleSelectPhone(phoneModalName, item.number)}
+        >
+          <Text style={styles.phoneOptionNumber}>
+            {item.number}
+            {label}
+          </Text>
+        </TouchableOpacity>
+      );
+    },
+    [handleSelectPhone, phoneModalName]
+  );
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -146,6 +240,32 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
             <Text style={styles.cancelText}>{t(language, 'cancel_upper')}</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Secondary modal: choose number */}
+        <Modal
+          visible={phoneModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={closePhoneModal}
+        >
+          <View style={styles.phoneOverlay}>
+            <View style={styles.phoneModal}>
+              <Text style={styles.phoneTitle}>{phoneModalTitle}</Text>
+              <Text style={styles.phoneSubtitle}>{phoneModalName}</Text>
+
+              <FlatList
+                data={phoneModalPhones}
+                keyExtractor={(item, idx) => `${item.number}-${idx}`}
+                renderItem={renderPhoneOption}
+                keyboardShouldPersistTaps="handled"
+              />
+
+              <TouchableOpacity style={styles.phoneCancel} onPress={closePhoneModal}>
+                <Text style={styles.phoneCancelText}>{t(language, 'cancel_upper')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     </Modal>
   );
@@ -187,12 +307,30 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#eee',
   },
-  name: { 
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  name: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
+    flexShrink: 1,
   },
-  phone: { fontSize: 14, color: '#666' },
+  badge: {
+    backgroundColor: '#111',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  phone: { fontSize: 14, color: '#666', marginTop: 4 },
+
   cancel: {
     backgroundColor: '#FF0000',
     padding: 15,
@@ -200,6 +338,59 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   cancelText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  // Phone picker modal
+  phoneOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 18,
+  },
+  phoneModal: {
+    width: '100%',
+    maxWidth: 520,
+    maxHeight: '70%',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    padding: 15,
+  },
+  phoneTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center',
+  },
+  phoneSubtitle: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+    marginTop: 6,
+    marginBottom: 10,
+  },
+  phoneOption: {
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  phoneOptionNumber: {
+    fontSize: 18,
+    color: '#000',
+    fontWeight: '600',
+  },
+  phoneCancel: {
+    backgroundColor: '#FF0000',
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 12,
+  },
+  phoneCancelText: {
     color: '#fff',
     textAlign: 'center',
     fontSize: 18,

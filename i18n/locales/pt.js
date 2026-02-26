@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'Se um bloco não tiver número, a chamada não iniciará.',
 
   contact_picker_title: 'Selecionar contato',
+  choose_number_title: 'Escolha o número desejado',
   contact_search_placeholder: 'Pesquisar contatos...',
   contact_permission_error: 'Permissão de acesso aos contatos negada',
   cancel_upper: 'CANCELAR',

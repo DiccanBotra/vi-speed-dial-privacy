@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'Если на плитке нет номера, звонок не начнется.',
 
   contact_picker_title: 'Выбрать контакт',
+  choose_number_title: 'Выберите желаемый номер',
   contact_search_placeholder: 'Поиск контактов...',
   contact_permission_error: 'Доступ к контактам запрещен',
   cancel_upper: 'ОТМЕНА',

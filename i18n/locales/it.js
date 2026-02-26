@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'Se una tessera non ha un numero, la chiamata non partirà.',
 
   contact_picker_title: 'Seleziona contatto',
+  choose_number_title: 'Scegli il numero desiderato',
   contact_search_placeholder: 'Cerca contatti...',
   contact_permission_error: 'Permesso di accesso ai contatti negato',
   cancel_upper: 'ANNULLA',

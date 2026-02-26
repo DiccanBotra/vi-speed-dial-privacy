@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'Si une tuile n\'a pas de numéro, l\'appel ne démarrera pas.',
 
   contact_picker_title: 'Sélectionner un contact',
+  choose_number_title: 'Choisissez le numéro souhaité',
   contact_search_placeholder: 'Rechercher des contacts...',
   contact_permission_error: 'Permission d\'accès aux contacts refusée',
   cancel_upper: 'ANNULER',

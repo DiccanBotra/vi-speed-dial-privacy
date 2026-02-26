@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'Hvis en flis ikke har nummer, vil ikke anropet starte.',
 
   contact_picker_title: 'Velg kontakt',
+  choose_number_title: 'Velg ønsket nummer',
   contact_search_placeholder: 'Søk i kontakter...',
   contact_permission_error: 'Tilgang til kontakter nektet',
   cancel_upper: 'AVBRYT',

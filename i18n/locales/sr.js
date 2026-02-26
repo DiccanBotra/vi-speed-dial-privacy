@@ -85,6 +85,7 @@ export default {
 
   // Contact picker
   contact_picker_title: 'Izaberi kontakt',
+  choose_number_title: 'Izaberi željeni broj',
   contact_search_placeholder: 'Pretraži kontakte...',
   contact_permission_error: 'Nema dozvole za kontakte',
   cancel_upper: 'OTKAŽI',

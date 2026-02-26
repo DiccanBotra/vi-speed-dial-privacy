@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'إذا لم يكن للبلاطة رقم، فلن يبدأ الاتصال.',
 
   contact_picker_title: 'اختر جهة اتصال',
+  choose_number_title: 'اختر الرقم المطلوب',
   contact_search_placeholder: 'البحث عن جهات الاتصال...',
   contact_permission_error: 'تم رفض إذن الوصول إلى جهات الاتصال',
   cancel_upper: 'إلغاء',

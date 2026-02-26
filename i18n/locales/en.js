@@ -71,6 +71,7 @@ export default {
   guide_call_2: 'If a tile has no number, the call will not start.',
 
   contact_picker_title: 'Select contact',
+  choose_number_title: 'Choose the desired number ',
   contact_search_placeholder: 'Search contacts...',
   contact_permission_error: 'Contacts permission denied',
   cancel_upper: 'CANCEL',
