@@ -6,12 +6,12 @@ import { t } from '../i18n/t';
 export function CreditsScreen({ language }) {
 
   const email = '4d.studio.becej@gmail.com';
-  const donateUrl = 'https://buymeacoffee.com/4dstudio';
+  const donateUrl = 'https://ko-fi.com/4dstudio';
 
   const version =
     Constants.expoConfig?.version ||
     Constants.manifest2?.extra?.expoClient?.version ||
-    '1.0.2';
+    '1.1.0';
 
   const openEmail = async () => {
     Linking.openURL(`mailto:${email}`);
@@ -41,7 +41,7 @@ export function CreditsScreen({ language }) {
         <Text style={styles.text}>{t(language,'donate_text')}</Text>
 
         <TouchableOpacity style={styles.donateBtn} onPress={openDonate}>
-          <Text style={styles.donateText}>☕ Buy Me a Coffee</Text>
+          <Text style={styles.donateText}>☕ Buy me a coffee</Text>
         </TouchableOpacity>
       </View>
 
