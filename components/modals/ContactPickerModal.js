@@ -22,6 +22,15 @@ function normalizeForSearch(num) {
   return String(num).toLowerCase().replace(/\s+/g, '');
 }
 
+// Ključ za deduplikaciju brojeva
+function phoneKey(num) {
+  if (!num) return '';
+  const s = String(num).trim();
+  const plus = s.startsWith('+') ? '+' : '';
+  const digits = s.replace(/\D/g, '');
+  return plus ? `+${digits}` : digits;
+}
+
 export default function ContactPickerModal({ visible, onClose, onSelect, language }) {
   const [results, setResults] = useState([]);
   const [search, setSearch] = useState('');
@@ -64,37 +73,44 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
       .map((c) => {
         const rawPhones = Array.isArray(c.phoneNumbers) ? c.phoneNumbers : [];
 
-        // uzmi sve brojeve (i izbaci prazne)
-        const phones = rawPhones
-          .map((p) => ({
-            label: p?.label || '',
-            number: p?.number || '',
-            numberLower: normalizeForSearch(p?.number || ''),
-          }))
-          .filter((p) => !!p.number);
+        const seen = new Set();
 
-        const firstPhone = phones[0]?.number || '';
+        const phones = rawPhones
+          .map((p) => {
+            const number = (p?.number || '').trim();
+            return {
+              label: p?.label || '',
+              number,
+              numberLower: normalizeForSearch(number),
+              key: phoneKey(number),
+            };
+          })
+          .filter((p) => !!p.number && !!p.key)
+          .filter((p) => {
+            if (seen.has(p.key)) return false; // 🔥 dedupe
+            seen.add(p.key);
+            return true;
+          })
+          .map(({ key, ...rest }) => rest);
 
         return {
           id: c.id,
           name: c.name || '',
           nameLower: (c.name || '').toLowerCase(),
-          phones, // 🔥 sva telefonska polja
-          firstPhone,
-          // za brzu pretragu po bilo kom broju
+          phones,
+          firstPhone: phones[0]?.number || '',
           phonesSearch: phones.map((p) => p.numberLower).join(' '),
         };
       })
-      // izbaci kontakte bez broja
       .filter((c) => c.phones.length > 0);
 
     contactsRef.current = normalized;
-
-    // inicijalno pokaži prvih MAX_RESULTS
     setResults(normalized.slice(0, MAX_RESULTS));
   }
 
-  // debounce search
+  /**
+   * Debounced search
+   */
   useEffect(() => {
     if (!visible) return;
 
@@ -113,16 +129,17 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
         const c = list[i];
 
         const matchName = c.nameLower.includes(qRaw);
-        // ako korisnik kuca broj, uklanjamo razmake radi boljeg match-a
         const matchPhone =
           qPhone.length > 0 &&
-          (c.phonesSearch.includes(qPhone) || c.firstPhone.toLowerCase().includes(qRaw));
+          (c.phonesSearch.includes(qPhone) ||
+            normalizeForSearch(c.firstPhone).includes(qPhone));
 
         if (matchName || matchPhone) {
           next.push(c);
           if (next.length >= MAX_RESULTS) break;
         }
       }
+
       setResults(next);
     }, DEBOUNCE_MS);
 
@@ -159,9 +176,9 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
           onPress={() => {
             if (item.phones.length === 1) {
               onSelect?.({ name: item.name, phone: item.phones[0].number });
-              return;
+            } else {
+              openPhoneModal(item);
             }
-            openPhoneModal(item);
           }}
         >
           <View style={styles.row}>
@@ -184,7 +201,7 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
   const keyExtractor = useCallback((item) => item.id, []);
 
   const phoneModalTitle = useMemo(() => {
-    return t(language, 'choose_number_title');
+    return t(language, 'choose_number_title') || 'Choose a number';
   }, [language]);
 
   const renderPhoneOption = useCallback(
@@ -231,7 +248,6 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
             keyboardShouldPersistTaps="handled"
             initialNumToRender={20}
             maxToRenderPerBatch={20}
-            updateCellsBatchingPeriod={50}
             windowSize={7}
             removeClippedSubviews
           />
@@ -241,7 +257,7 @@ export default function ContactPickerModal({ visible, onClose, onSelect, languag
           </TouchableOpacity>
         </View>
 
-        {/* Secondary modal: choose number */}
+        {/* Modal za izbor broja */}
         <Modal
           visible={phoneModalVisible}
           transparent
@@ -329,8 +345,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
-  phone: { fontSize: 14, color: '#666', marginTop: 4 },
-
+  phone: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
   cancel: {
     backgroundColor: '#FF0000',
     padding: 15,
@@ -343,8 +362,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-
-  // Phone picker modal
   phoneOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',
@@ -370,8 +387,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     textAlign: 'center',
-    marginTop: 6,
-    marginBottom: 10,
+    marginVertical: 8,
   },
   phoneOption: {
     paddingVertical: 14,
