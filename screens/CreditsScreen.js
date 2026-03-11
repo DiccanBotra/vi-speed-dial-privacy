@@ -11,7 +11,7 @@ export function CreditsScreen({ language }) {
   const version =
     Constants.expoConfig?.version ||
     Constants.manifest2?.extra?.expoClient?.version ||
-    '1.1.1';
+    '1.2.0';
 
   const openEmail = async () => {
     Linking.openURL(`mailto:${email}`);

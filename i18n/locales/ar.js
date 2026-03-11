@@ -91,4 +91,9 @@ export default {
   shape_star: 'نجمة',
   shape_hexagon: 'سداسي',
   shape_diamond: 'معين',
+
+  delete_contact_title: "حذف جهة الاتصال",
+  delete_contact_confirm: "هل أنت متأكد أنك تريد حذف جهة الاتصال هذه؟",
+  yes: "نعم",
+  no: "لا",
 };

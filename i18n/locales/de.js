@@ -91,4 +91,9 @@ export default {
   shape_star: 'Stern',
   shape_hexagon: 'Sechseck',
   shape_diamond: 'Raute',
+
+  delete_contact_title: "Kontakt löschen",
+  delete_contact_confirm: "Sind Sie sicher, dass Sie diesen Kontakt löschen möchten?",
+  yes: "Ja",
+  no: "Nein",
 };

@@ -13,6 +13,7 @@ import EditContactModal from './modals/EditContactModal';
 import ColorPickerModal from './modals/ColorPickerModal';
 import ContactPickerModal from './modals/ContactPickerModal';
 import ShapePickerModal from './modals/ShapePickerModal';
+import DeleteContactModal from './modals/DeleteContactModal';
 
 import { t } from '../i18n/t';
 
@@ -21,6 +22,7 @@ export default function SettingsPanel({ contacts, onUpdateContacts, onReset, lan
   const [colorIndex, setColorIndex] = useState(null);
   const [contactIndex, setContactIndex] = useState(null);
   const [shapeIndex, setShapeIndex] = useState(null);
+  const [deleteIndex, setDeleteIndex] = useState(null);
 
   function updateContact(updated) {
     const newContacts = [...contacts];
@@ -51,15 +53,32 @@ export default function SettingsPanel({ contacts, onUpdateContacts, onReset, lan
 
   function updateShape(shapeType) {
     const newContacts = [...contacts];
-    newContacts[shapeIndex] = { ...newContacts[shapeIndex], shape: shapeType };
+    newContacts[shapeIndex] = {
+      ...newContacts[shapeIndex],
+      shape: shapeType,
+    };
     onUpdateContacts(newContacts);
+  }
+
+  function deleteContact() {
+    if (deleteIndex === null) return;
+
+    const newContacts = [...contacts];
+    newContacts[deleteIndex] = {
+      ...newContacts[deleteIndex],
+      name: '',
+      phone: '',
+    };
+
+    onUpdateContacts(newContacts);
+    setDeleteIndex(null);
   }
 
   return (
     <>
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <View style={styles.topBorder} />
-        <ScrollView 
+        <ScrollView
           style={styles.container}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={true}
@@ -69,9 +88,8 @@ export default function SettingsPanel({ contacts, onUpdateContacts, onReset, lan
               <View style={styles.colorContainer}>
                 <View style={[styles.color, { backgroundColor: c.color }]} />
               </View>
-              
+
               <View style={styles.contentContainer}>
-                {/* Ime i broj iznad ikona */}
                 <View style={styles.contactInfo}>
                   <Text style={styles.name}>
                     {c.name || t(language, 'empty_contact')}
@@ -81,19 +99,28 @@ export default function SettingsPanel({ contacts, onUpdateContacts, onReset, lan
                   </Text>
                 </View>
 
-                {/* Ikone ispod imena */}
                 <View style={styles.buttons}>
                   <TouchableOpacity style={styles.btn} onPress={() => setEditIndex(i)}>
                     <Text style={styles.editIcon}>✎</Text>
                   </TouchableOpacity>
+
                   <TouchableOpacity style={styles.btn} onPress={() => setContactIndex(i)}>
                     <Text style={styles.icon}>📱</Text>
                   </TouchableOpacity>
+
                   <TouchableOpacity style={styles.btn} onPress={() => setColorIndex(i)}>
                     <Text style={styles.icon}>🎨</Text>
                   </TouchableOpacity>
+
                   <TouchableOpacity style={styles.btn} onPress={() => setShapeIndex(i)}>
                     <Text style={styles.icon}>🔷</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.btn, styles.deleteBtn]}
+                    onPress={() => setDeleteIndex(i)}
+                  >
+                    <Text style={styles.icon}>🗑️</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -103,13 +130,11 @@ export default function SettingsPanel({ contacts, onUpdateContacts, onReset, lan
           <TouchableOpacity style={styles.reset} onPress={onReset}>
             <Text style={styles.resetText}>{t(language, 'reset_app')}</Text>
           </TouchableOpacity>
-          
-          {/* Dodatni prostor na dnu za Android */}
+
           {Platform.OS === 'android' && <View style={styles.androidBottomSpace} />}
         </ScrollView>
       </SafeAreaView>
 
-      {/* MODALI - isti kao pre */}
       <EditContactModal
         language={language}
         visible={editIndex !== null}
@@ -147,6 +172,13 @@ export default function SettingsPanel({ contacts, onUpdateContacts, onReset, lan
           setShapeIndex(null);
         }}
       />
+
+      <DeleteContactModal
+        language={language}
+        visible={deleteIndex !== null}
+        onClose={() => setDeleteIndex(null)}
+        onConfirm={deleteContact}
+      />
     </>
   );
 }
@@ -161,12 +193,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     width: '100%',
   },
-  container: { 
+  container: {
     flex: 1,
     backgroundColor: '#FFD700',
   },
   scrollContent: {
-    paddingBottom: Platform.OS === 'android' ? 30 : 20, // Dodatni prostor za Android
+    paddingBottom: Platform.OS === 'android' ? 30 : 20,
   },
   item: {
     flexDirection: 'row',
@@ -191,19 +223,20 @@ const styles = StyleSheet.create({
   contactInfo: {
     marginBottom: 10,
   },
-  name: { 
+  name: {
     color: '#000',
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 2,
   },
-  phone: { 
+  phone: {
     color: '#666',
     fontSize: 14,
   },
-  buttons: { 
+  buttons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    marginLeft: -25,
   },
   btn: {
     backgroundColor: '#FFF',
@@ -215,6 +248,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     minWidth: 44,
     alignItems: 'center',
+  },
+  deleteBtn: {
+    backgroundColor: '#FFF5F5',
   },
   icon: {
     fontSize: 20,
@@ -233,12 +269,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
   },
-  resetText: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
-    fontSize: 18 
+  resetText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
   androidBottomSpace: {
-    height: 20, // Dodatni prostor za Android
+    height: 20,
   },
 });

@@ -107,4 +107,9 @@ export default {
   shape_star: 'Zvezda',
   shape_hexagon: 'Šestougao',
   shape_diamond: 'Karo',
+
+  delete_contact_title: "Obriši kontakt",
+  delete_contact_confirm: "Da li ste sigurni da želite da obrišete ovaj kontakt?",
+  yes: "Da",
+  no: "Ne",
 };

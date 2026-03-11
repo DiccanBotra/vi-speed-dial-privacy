@@ -91,4 +91,9 @@ export default {
   shape_star: 'Star',
   shape_hexagon: 'Hexagon',
   shape_diamond: 'Diamond',
+
+  delete_contact_title: "Delete contact",
+  delete_contact_confirm: "Are you sure you want to delete this contact?",
+  yes: "Yes",
+  no: "No",
 };
