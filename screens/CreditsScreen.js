@@ -11,7 +11,7 @@ export function CreditsScreen({ language }) {
   const version =
     Constants.expoConfig?.version ||
     Constants.manifest2?.extra?.expoClient?.version ||
-    '1.2.0';
+    '1.2.1';
 
   const openEmail = async () => {
     Linking.openURL(`mailto:${email}`);
@@ -25,7 +25,7 @@ export function CreditsScreen({ language }) {
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
       
       {/* APP */}
-      <Text style={styles.appName}>VI Speed Dial</Text>
+      <Text style={styles.appName}>Accessible Speed Dial</Text>
       <Text style={styles.subtitle}>Visually Impaired Speed Dial</Text>
 
       {/* BASIC INFO */}

@@ -15,7 +15,7 @@ export function SplashScreen({ onDone }) {
       
       {/* Tekst iznad logoa */}
       <Text style={styles.title}>
-        VISUALLY IMPAIRED{'\n'}
+        ACCESSIBLE{'\n'}
         SPEED DIAL
       </Text>
 
